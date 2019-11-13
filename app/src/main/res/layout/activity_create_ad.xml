@@ -93,6 +93,7 @@
             android:id="@+id/et_description"
             android:layout_width="0dp"
             android:layout_weight="0.6"
+            android:gravity="left"
             android:maxLines="4"
             android:minHeight="100dp"
             android:layout_height="wrap_content"

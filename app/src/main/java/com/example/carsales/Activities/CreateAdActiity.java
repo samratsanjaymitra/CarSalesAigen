@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaScannerConnection;
 import android.os.Bundle;
 import android.content.ClipData;
@@ -13,6 +14,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -68,7 +70,7 @@ public class CreateAdActiity extends AppCompatActivity {
 
     }
 
-     private void submitImage() {
+    private void submitImage() {
         btn_submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -165,6 +167,7 @@ public class CreateAdActiity extends AppCompatActivity {
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_MULTIPLE);
+
     }
 
     private void takePhotoFromCamera() {
@@ -194,25 +197,37 @@ public class CreateAdActiity extends AppCompatActivity {
                     && null != data) {
 
 
-                String[] filePathColumn = {MediaStore.Images.Media.RELATIVE_PATH};
+                String[] filePathColumn = {MediaStore.Images.Media.DATA};
 
                 imagesEncodedList = new ArrayList<String>();
                 if (data.getData() != null) {
 
                     Uri mImageUri = data.getData();
 
+                    String wholeID = DocumentsContract.getDocumentId(mImageUri);
+
+                    String id = wholeID.split(":")[1];
+
                     String path = mImageUri.getPath();
 
-                    Cursor cursor = getContentResolver().query(mImageUri,
-                            filePathColumn, null, null, null);
+                    String sel = MediaStore.Images.Media._ID + "=?";
+
+                    Cursor cursor = getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                            filePathColumn, sel, new String[]{id}, null);
 
                     cursor.moveToFirst();
 
                     int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                     imageEncoded = cursor.getString(columnIndex);
+                    Bitmap bitmap = (BitmapFactory.decodeFile(imageEncoded));
+                    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+                    String path1 = MediaStore.Images.Media.insertImage(this.getContentResolver(), bitmap, "Title", null);
+                    Uri uri = Uri.parse(path1);
+                    Log.e("ssf", uri.toString());
                     cursor.close();
 
-                    mArrayUri.add(mImageUri);
+                    mArrayUri.add(uri);
                     galleryAdapter = new GalleryAdapter(getApplicationContext(), mArrayUri, false, "");
                     gvGallery.setAdapter(galleryAdapter);
                     gvGallery.setVerticalSpacing(gvGallery.getHorizontalSpacing());
@@ -227,12 +242,27 @@ public class CreateAdActiity extends AppCompatActivity {
 
                             ClipData.Item item = mClipData.getItemAt(i);
                             Uri uri = item.getUri();
-                            mArrayUri.add(uri);
-                            Cursor cursor = getContentResolver().query(uri, filePathColumn, null, null, null);
+                            String wholeID = DocumentsContract.getDocumentId(uri);
+
+                            String id = wholeID.split(":")[1];
+
+                            String path = uri.getPath();
+
+                            String sel = MediaStore.Images.Media._ID + "=?";
+
+                            Cursor cursor = getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                                    filePathColumn, sel, new String[]{id}, null);
+
                             cursor.moveToFirst();
                             int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                             imageEncoded = cursor.getString(columnIndex);
                             imagesEncodedList.add(imageEncoded);
+                            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                            Bitmap bitmap = (BitmapFactory.decodeFile(imageEncoded));
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+                            String path1 = MediaStore.Images.Media.insertImage(this.getContentResolver(), bitmap, "Title", null);
+                            Uri uriNew = Uri.parse(path1);
+                            mArrayUri.add(uriNew);
                             cursor.close();
 
                             galleryAdapter = new GalleryAdapter(getApplicationContext(), mArrayUri, false, "");

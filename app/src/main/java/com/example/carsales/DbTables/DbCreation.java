@@ -118,7 +118,7 @@ public class DbCreation extends SQLiteOpenHelper {
 
     }
 
-    public void addCarDetails(int id, String carName, String url,String price,String year,String description) {
+    public void addCarDetails(int id, String carName, String url, String price, String year, String description) {
         db = this.getWritableDatabase();
 
         String insertCarImage = "INSERT INTO " + TABLE_CARDETAILS + "\n" +
@@ -128,21 +128,23 @@ public class DbCreation extends SQLiteOpenHelper {
 
         String carID = String.valueOf(id);
 
-        db.execSQL(insertCarImage, new String[]{carID, carName, url,price,year,description});
+        db.execSQL(insertCarImage, new String[]{carID, carName, url, price, year, description});
 
 
     }
 
-    public void editCarDetails(String id, String carName,String price,String year,String description) {
-        db = this.getWritableDatabase();
-        String updateCarImage = "Update " + TABLE_CARDETAILS + " set" +
-                "(carName,price,year,description)\n" +
-                "VALUES \n" +
-                "(?, ?, ?, ?)" + " where id=" + id;
+    public void editCarDetails(String id, String carName, String price, String year, String description) {
+        try {
+            db = this.getWritableDatabase();
+            String updateCarImage = "Update " + TABLE_CARDETAILS + " set carName = ?, price = ?,year = ?,description=?\n" +
+                    " where id=" + id;
 
 
+            db.execSQL(updateCarImage, new String[]{carName, price, year, description});
 
-        db.execSQL(updateCarImage, new String[]{carName,price,year,description});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
     }
@@ -293,8 +295,8 @@ public class DbCreation extends SQLiteOpenHelper {
     }
 
     public String getLoginState() {
-        String stateId="none";
-        String id="1";
+        String stateId = "none";
+        String id = "1";
         try {
             String selectQuery = "SELECT stateId FROM " + TABLE_LOGINSTATE + " where id=" + id;
 

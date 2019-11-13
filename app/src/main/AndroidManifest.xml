@@ -30,7 +30,6 @@
             android:name=".Activities.LoginActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
         <activity android:name=".Activities.CarDetails" />
-        <activity android:name=".Activities.HomeActivity" />
         <activity android:name=".Activities.CreateAdActiity" />
     </application>
 

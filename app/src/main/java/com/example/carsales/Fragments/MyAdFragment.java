@@ -22,7 +22,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.example.carsales.Activities.CreateAdActiity;
-import com.example.carsales.Activities.HomeActivity;
+
 import com.example.carsales.Adapters.HomeAdapter;
 import com.example.carsales.POJO.ImagePOJO;
 import com.example.carsales.R;

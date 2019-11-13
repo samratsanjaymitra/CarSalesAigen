@@ -19,7 +19,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.carsales.Activities.HomeActivity;
+
 import com.example.carsales.Adapters.HomeAdapter;
 import com.example.carsales.DbTables.DbCreation;
 import com.example.carsales.POJO.ImagePOJO;
