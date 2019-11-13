@@ -23,7 +23,6 @@ import java.util.ArrayList;
 public class LoginActivity extends AppCompatActivity {
 
     EditText et_Name, et_Password;
-    ProgressBar pb_progress;
     Button btn_Login;
     ArrayList<LoginPOJO> loginDetails;
     String userName = "";
@@ -84,7 +83,6 @@ public class LoginActivity extends AppCompatActivity {
     private void initViews() {
         et_Name = (EditText) findViewById(R.id.et_UserName);
         et_Password = (EditText) findViewById(R.id.et_UserPassword);
-        pb_progress = (ProgressBar) findViewById(R.id.pb_progress);
         btn_Login = (Button) findViewById(R.id.btn_Login);
 
     }
