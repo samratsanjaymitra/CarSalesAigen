@@ -4,6 +4,33 @@ public class ImagePOJO {
     String id;
     String imageURL;
     String carName;
+    String price;
+    String year;
+    String description;
+
+    public String getPrice() {
+        return price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
+    }
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     public String getImageURL() {
         return imageURL;

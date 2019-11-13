@@ -32,6 +32,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -39,9 +40,13 @@ import java.util.List;
 
 public class CreateAdActiity extends AppCompatActivity {
 
-    private Button btn, btn2;
+    private Button btn_submit, btn_image;
 
     EditText et_name;
+    EditText et_year;
+    EditText et_price;
+    EditText et_description;
+
     int PICK_IMAGE_MULTIPLE = 1, CAMERA = 2;
     String imageEncoded;
     List<String> imagesEncodedList;
@@ -55,26 +60,37 @@ public class CreateAdActiity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_ad);
+        initView();
 
-        btn = findViewById(R.id.btn);
-        gvGallery = (GridView) findViewById(R.id.gv);
-        btn2 = (Button) findViewById(R.id.btn2);
-        et_name = (EditText) findViewById(R.id.et_name);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showPictureDialog();
+        selectImage();
+        submitImage();
 
-            }
-        });
-        btn2.setOnClickListener(new View.OnClickListener() {
+
+    }
+
+     private void submitImage() {
+        btn_submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (et_name.getText().toString().equals("")) {
                     Toast.makeText(CreateAdActiity.this, "Please enter carName", Toast.LENGTH_SHORT).show();
 
+                } else if (et_price.getText().toString().equals("")) {
+                    Toast.makeText(CreateAdActiity.this, "Please enter price", Toast.LENGTH_SHORT).show();
+
+                } else if (et_year.getText().toString().equals("")) {
+                    Toast.makeText(CreateAdActiity.this, "Please enter year", Toast.LENGTH_SHORT).show();
+
+                } else if (et_description.getText().toString().equals("")) {
+                    Toast.makeText(CreateAdActiity.this, "Please enter some description for car", Toast.LENGTH_SHORT).show();
+
                 } else {
                     String carName = et_name.getText().toString();
+                    String price = et_price.getText().toString();
+                    String year = et_year.getText().toString();
+                    String description = et_description.getText().toString();
+
+
                     if (mArrayUri.size() == 0) {
                         Toast.makeText(CreateAdActiity.this, "Please select Image", Toast.LENGTH_SHORT).show();
 
@@ -82,10 +98,10 @@ public class CreateAdActiity extends AppCompatActivity {
                         DbCreation obj = new DbCreation(CreateAdActiity.this);
                         int id = obj.getCarId() + 1;
                         for (int i = 0; i < mArrayUri.size(); i++) {
-                            obj.addCarDetails(id, carName, String.valueOf(mArrayUri.get(i)));
+                            obj.addCarDetails(id, carName, String.valueOf(mArrayUri.get(i)), price, year, description);
 
                         }
-                        Intent intent = new Intent(CreateAdActiity.this, HomeActivity.class);
+                        Intent intent = new Intent(CreateAdActiity.this, HomeNewActivity.class);
                         startActivity(intent);
                         Toast.makeText(CreateAdActiity.this, "Success", Toast.LENGTH_SHORT).show();
 
@@ -94,6 +110,27 @@ public class CreateAdActiity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void selectImage() {
+        btn_image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPictureDialog();
+
+            }
+        });
+
+    }
+
+    private void initView() {
+        btn_image = findViewById(R.id.btn_image);
+        gvGallery = (GridView) findViewById(R.id.gv);
+        btn_submit = (Button) findViewById(R.id.btn_submit);
+        et_name = (EditText) findViewById(R.id.et_name);
+        et_year = (EditText) findViewById(R.id.et_year);
+        et_price = (EditText) findViewById(R.id.et_price);
+        et_description = (EditText) findViewById(R.id.et_description);
 
     }
 
@@ -157,12 +194,14 @@ public class CreateAdActiity extends AppCompatActivity {
                     && null != data) {
 
 
-                String[] filePathColumn = {MediaStore.Images.Media.DATA};
+                String[] filePathColumn = {MediaStore.Images.Media.RELATIVE_PATH};
+
                 imagesEncodedList = new ArrayList<String>();
                 if (data.getData() != null) {
 
                     Uri mImageUri = data.getData();
 
+                    String path = mImageUri.getPath();
 
                     Cursor cursor = getContentResolver().query(mImageUri,
                             filePathColumn, null, null, null);

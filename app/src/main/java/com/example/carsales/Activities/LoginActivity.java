@@ -5,6 +5,7 @@ import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
@@ -33,30 +34,12 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        setPermissions();
-        if (ActivityCompat.checkSelfPermission(LoginActivity.this,
-                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(LoginActivity.this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(LoginActivity.this,
-                Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-
-        }
         initViews();
         userLogin();
 
     }
 
-    private void setPermissions() {
-        String[] permissions = {"android.permission.WRITE_EXTERNAL_STORAGE",
-                "android.permission.READ_EXTERNAL_STORAGE", "android.permission.ACCESS_COARSE_LOCATION",
-                "android.permission.CAMERA"};
-        ActivityCompat.requestPermissions(this, permissions, REQUEST_CODE); // without sdk version check
-
-    }
-
-
-    private void userLogin() {
+     private void userLogin() {
         btn_Login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -73,11 +56,15 @@ public class LoginActivity extends AppCompatActivity {
 
                 }
                 if (loginFlag == true) {
-                    obj.addCarDetails(101, "Car1", "R.drawable.car1");
-                    obj.addCarDetails(102, "Car2", "R.drawable.car2");
-                    obj.addCarDetails(102, "Car2", "R.drawable.car1");
+                    obj.addCarDetails(101, "Car1", "R.drawable.car1","200000","2005","This is special car.");
+                    obj.addCarDetails(102, "Car2", "R.drawable.car2","100000","2009","Dream Car");
+                    obj.addCarDetails(102, "Car2", "R.drawable.car1"," ","","");
+                    SharedPreferences sharedPreferences = getSharedPreferences("loginState", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("state", "2");
+                    editor.commit();
                     Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                    Intent intent = new Intent(LoginActivity.this, HomeNewActivity.class);
                     startActivity(intent);
 
 

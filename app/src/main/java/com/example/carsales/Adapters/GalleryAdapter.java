@@ -71,11 +71,7 @@ public class GalleryAdapter extends BaseAdapter {
                 ivGallery.setImageResource(R.drawable.car2);
             } else {
                 try {
-                    if (ctx.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                        requestPermissions((Activity) ctx, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_READ_PERMISSION_CODE);
-                    } else {
-                        Picasso.with(ctx).load(mArrayUri.get(position)).into(ivGallery);
-                    }
+                    ivGallery.setImageURI(mArrayUri.get(position));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

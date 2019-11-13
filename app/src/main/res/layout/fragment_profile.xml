@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/splash_background"
+    tools:context=".Fragments.AdFragment"
+    android:weightSum="1">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="0.4"
+        android:layout_gravity="center"
+        android:textStyle="bold"
+        android:padding="10sp"
+        android:textColor="@color/black"
+        android:gravity="center"
+        android:text="Contact Seller"
+        android:textSize="40sp" />
+
+    <ImageView
+        android:layout_width="300dp"
+        android:layout_height="0dp"
+        android:layout_weight="0.3"
+        android:layout_gravity="center"
+        android:src="@drawable/pro"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="0.2"
+        android:layout_gravity="center"
+        android:textStyle="bold"
+        android:padding="10sp"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:text="Now you can contact with your seller through E-mail"
+        android:textSize="20sp" />
+
+    <Button
+        android:id="@+id/btn_started"
+        android:background="@color/colorAccent"
+        android:layout_width="200dp"
+        android:layout_gravity="right"
+        android:layout_margin="10dp"
+        android:text="Get Started   >"
+        android:textSize="20dp"
+        android:layout_height="wrap_content">
+
+    </Button>
+</LinearLayout>

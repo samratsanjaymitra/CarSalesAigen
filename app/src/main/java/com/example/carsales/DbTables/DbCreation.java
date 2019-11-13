@@ -21,7 +21,7 @@ public class DbCreation extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "carSales";
     private static final String TABLE_LOGIN = "login_details";
-    private static final String TABLE_CARIMAGE = "car_image";
+    private static final String TABLE_LOGINSTATE = "login_state";
     private static final String TABLE_CARDETAILS = "car_details";
     private static final String EMAIL = "email";
     private static final String PASSWORD = "password";
@@ -58,7 +58,7 @@ public class DbCreation extends SQLiteOpenHelper {
         try {
             db = this.getWritableDatabase();
             String create_carImage = "CREATE TABLE IF NOT EXISTS " + TABLE_CARDETAILS + "("
-                    + " id varchar(200), carName varchar(200),url varchar(200)"
+                    + " id varchar(200), carName varchar(200),url varchar(200),price varchar(200),year varchar(200),description varchar(200)"
                     + ")";
 
             db.execSQL(create_carImage);
@@ -85,7 +85,7 @@ public class DbCreation extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOGIN);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CARIMAGE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CARDETAILS);
         onCreate(db);
     }
 
@@ -118,17 +118,31 @@ public class DbCreation extends SQLiteOpenHelper {
 
     }
 
-    public void addCarDetails(int id, String carName, String url) {
+    public void addCarDetails(int id, String carName, String url,String price,String year,String description) {
         db = this.getWritableDatabase();
 
         String insertCarImage = "INSERT INTO " + TABLE_CARDETAILS + "\n" +
-                "(id,carName,url)\n" +
+                "(id,carName,url,price,year,description)\n" +
                 "VALUES \n" +
-                "(?, ?, ?);";
+                "(?, ?, ?, ?, ?,?);";
 
         String carID = String.valueOf(id);
 
-        db.execSQL(insertCarImage, new String[]{carID, carName, url});
+        db.execSQL(insertCarImage, new String[]{carID, carName, url,price,year,description});
+
+
+    }
+
+    public void editCarDetails(String id, String carName,String price,String year,String description) {
+        db = this.getWritableDatabase();
+        String updateCarImage = "Update " + TABLE_CARDETAILS + " set" +
+                "(carName,price,year,description)\n" +
+                "VALUES \n" +
+                "(?, ?, ?, ?)" + " where id=" + id;
+
+
+
+        db.execSQL(updateCarImage, new String[]{carName,price,year,description});
 
 
     }
@@ -157,6 +171,9 @@ public class DbCreation extends SQLiteOpenHelper {
                         imagePOJO.setId(cursorNew.getString(0));
                         imagePOJO.setCarName(cursorNew.getString(1));
                         imagePOJO.setImageURL(cursorNew.getString(2));
+                        imagePOJO.setPrice(cursorNew.getString(3));
+                        imagePOJO.setYear(cursorNew.getString(4));
+                        imagePOJO.setDescription(cursorNew.getString(5));
                         carList.add(imagePOJO);
 
                     }
@@ -172,6 +189,38 @@ public class DbCreation extends SQLiteOpenHelper {
 
     }
 
+    public ArrayList<ImagePOJO> getCarDescription(String id) {
+
+
+        ArrayList<ImagePOJO> carList = new ArrayList<>();
+
+        try {
+            String selectQuery = "SELECT * FROM " + TABLE_CARDETAILS + " where id =" + id;
+
+            db = this.getWritableDatabase();
+
+            Cursor cursor = db.rawQuery(selectQuery, null);
+            if (cursor.moveToFirst()) {
+
+
+                ImagePOJO imagePOJO = new ImagePOJO();
+                imagePOJO.setId(cursor.getString(0));
+                imagePOJO.setCarName(cursor.getString(1));
+                imagePOJO.setPrice(cursor.getString(3));
+                imagePOJO.setYear(cursor.getString(4));
+                imagePOJO.setDescription(cursor.getString(5));
+
+                carList.add(imagePOJO);
+
+            }
+        } catch (Exception e) {
+            Log.e("ssd", e.toString());
+        }
+
+
+        return carList;
+
+    }
 
     public int getCarId() {
         int carId = 102;
@@ -199,7 +248,7 @@ public class DbCreation extends SQLiteOpenHelper {
         return carId;
     }
 
-    public ArrayList<String> getCarDetails(String id) {
+    public ArrayList<String> getCarImage(String id) {
 
 
         ArrayList<String> carURL = new ArrayList<>();
@@ -227,5 +276,58 @@ public class DbCreation extends SQLiteOpenHelper {
 
     }
 
+    public boolean tableLoginStateCreation() {
+        try {
+            db = this.getWritableDatabase();
+            String create_loginState = "CREATE TABLE IF NOT EXISTS " + TABLE_LOGINSTATE + "("
+                    + " id varchar(100),stateId varchar(5)"
+                    + ")";
+
+            db.execSQL(create_loginState);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+    }
+
+    public String getLoginState() {
+        String stateId="none";
+        String id="1";
+        try {
+            String selectQuery = "SELECT stateId FROM " + TABLE_LOGINSTATE + " where id=" + id;
+
+            db = this.getWritableDatabase();
+            Cursor cursor = db.rawQuery(selectQuery, null);
+            if (cursor.moveToFirst()) {
+                do {
+
+                    stateId = (cursor.getString(0));
+
+                } while (cursor.moveToNext());
+
+            }
+
+
+        } catch (Exception e) {
+            Log.e("ssd", e.toString());
+        }
+
+        return stateId;
+    }
+
+    public void addLoginState(String stateId) {
+        db = this.getWritableDatabase();
+
+        String insertLoginState = "INSERT INTO " + TABLE_LOGINSTATE + "\n" +
+                "(id,stateId)\n" +
+                "VALUES \n" +
+                "(?, ?);";
+
+        db.execSQL(insertLoginState, new String[]{"1", stateId});
+
+
+    }
 }
 

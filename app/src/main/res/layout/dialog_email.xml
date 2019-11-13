@@ -1,41 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:background="@color/grey"
+    android:layout_margin="10dp"
+    android:background="@android:drawable/editbox_background_normal"
     android:orientation="vertical">
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:background="@color/black"
+        android:layout_height="50dp"
         android:layout_margin="10dp"
         android:gravity="center"
-        android:text="Write your Message to Car Owner:"
-        android:textSize="20dp" />
+        android:textColor="@color/white"
+        android:text="Compose mail to the Seller"
+        android:textSize="15dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:layout_margin="10dp"
+        android:textSize="15dp"
+        android:text="Compose Email Message :"/>
 
     <EditText
         android:id="@+id/et_msg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:background="@android:drawable/editbox_background"
         android:layout_margin="10dp"
+        android:gravity="left"
         android:hint="Enter message"
-        android:lines="4" />
+        android:lines="8" />
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="10dp"
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/btn_submit"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_marginRight="2dp"
+            android:background="@color/background"
             android:layout_height="wrap_content"
             android:text="Submit" />
 
         <Button
             android:id="@+id/btn_cancel"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_marginLeft="2dp"
+            android:background="@color/background"
             android:layout_height="wrap_content"
             android:text="Cancel" />
 

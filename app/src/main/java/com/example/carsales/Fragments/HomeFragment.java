@@ -1,20 +1,25 @@
-package com.example.carsales.Activities;
+package com.example.carsales.Fragments;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.LinearLayout;
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import com.example.carsales.Activities.HomeActivity;
 import com.example.carsales.Adapters.HomeAdapter;
 import com.example.carsales.DbTables.DbCreation;
 import com.example.carsales.POJO.ImagePOJO;
@@ -26,53 +31,46 @@ import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeFragment extends Fragment {
 
-    LinearLayout ll_newAd;
     RecyclerView rv_List;
     private static final int PERMISSION_REQUEST_CODE = 200;
-    private int REQUEST_CODE = 0x12;
+    TextView tv_msg;
+    ArrayList<ImagePOJO> al_data;
+    String title;
+
+    public HomeFragment(ArrayList<ImagePOJO> al_data) {
+        this.al_data = al_data;
+        title = "Aigen Tech";
+    }
+
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_home, container, false);
         if (!checkPermission()) {
             requestPermission();
         }
-        initViews();
-        setData();
-        createAd();
+        initViews(view);
+        setData(al_data);
+
+        return view;
     }
 
-
-
-    private void createAd() {
-        ll_newAd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(HomeActivity.this, CreateAdActiity.class);
-                startActivity(intent);
-
-            }
-        });
+    private void initViews(View view) {
+        tv_msg = (TextView) view.findViewById(R.id.tv_msg);
+        rv_List = (RecyclerView) view.findViewById(R.id.rv_List);
+        tv_msg.setText(tv_msg.getText() + " " + title);
     }
 
-    private void initViews() {
-        ll_newAd = (LinearLayout) findViewById(R.id.ll_newAd);
-        rv_List = (RecyclerView) findViewById(R.id.rv_List);
-    }
-
-    public void setData() {
+    public void setData(ArrayList<ImagePOJO> al_data) {
         try {
-            DbCreation obj = new DbCreation(HomeActivity.this);
-            ArrayList<ImagePOJO> al_Image = new ArrayList<>();
 
-            al_Image = obj.getCarDetails();
+            HomeAdapter adapter = new HomeAdapter(getActivity(), al_data,"home");
 
-            HomeAdapter adapter = new HomeAdapter(HomeActivity.this, al_Image,"home");
-
-            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext(),
+            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity(),
                     RecyclerView.VERTICAL, false);
             rv_List.setLayoutManager(mLayoutManager);
             rv_List.setAdapter(adapter);
@@ -84,17 +82,17 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private boolean checkPermission() {
-        int result = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
-        int result1 = ContextCompat.checkSelfPermission(getApplicationContext(), CAMERA);
-        int result2 = ContextCompat.checkSelfPermission(getApplicationContext(), READ_EXTERNAL_STORAGE);
+        int result = ContextCompat.checkSelfPermission(getActivity(), WRITE_EXTERNAL_STORAGE);
+        int result1 = ContextCompat.checkSelfPermission(getActivity(), CAMERA);
+        int result2 = ContextCompat.checkSelfPermission(getActivity(), READ_EXTERNAL_STORAGE);
 
 
-        return result == PackageManager.PERMISSION_GRANTED && result1 == PackageManager.PERMISSION_GRANTED && result2==PackageManager.PERMISSION_GRANTED;
+        return result == PackageManager.PERMISSION_GRANTED && result1 == PackageManager.PERMISSION_GRANTED && result2 == PackageManager.PERMISSION_GRANTED;
     }
 
     private void requestPermission() {
 
-        ActivityCompat.requestPermissions(this, new String[]{WRITE_EXTERNAL_STORAGE, CAMERA, READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
+        ActivityCompat.requestPermissions(getActivity(), new String[]{WRITE_EXTERNAL_STORAGE, CAMERA, READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
 
     }
 
@@ -133,7 +131,7 @@ public class HomeActivity extends AppCompatActivity {
 
 
     private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
-        new AlertDialog.Builder(HomeActivity.this)
+        new AlertDialog.Builder(getActivity())
                 .setMessage(message)
                 .setPositiveButton("OK", okListener)
                 .setNegativeButton("Cancel", null)

@@ -3,84 +3,80 @@ package com.example.carsales.Activities;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.LinearLayout;
+import android.os.Handler;
+import android.widget.Toast;
 
-import com.example.carsales.Adapters.HomeAdapter;
+import com.example.carsales.Adapters.IntroductionAdapter;
 import com.example.carsales.DbTables.DbCreation;
-import com.example.carsales.POJO.ImagePOJO;
 import com.example.carsales.R;
-
-import java.util.ArrayList;
 
 import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
-public class HomeActivity extends AppCompatActivity {
+public class SplashScreenActivity extends AppCompatActivity {
 
-    LinearLayout ll_newAd;
-    RecyclerView rv_List;
+    Handler handler;
+
+    SharedPreferences sharedPreferences;
+
     private static final int PERMISSION_REQUEST_CODE = 200;
-    private int REQUEST_CODE = 0x12;
+
+    String state;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
+        setContentView(R.layout.activity_splash_screen);
         if (!checkPermission()) {
             requestPermission();
         }
-        initViews();
-        setData();
-        createAd();
-    }
 
-
-
-    private void createAd() {
-        ll_newAd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(HomeActivity.this, CreateAdActiity.class);
-                startActivity(intent);
-
-            }
-        });
-    }
-
-    private void initViews() {
-        ll_newAd = (LinearLayout) findViewById(R.id.ll_newAd);
-        rv_List = (RecyclerView) findViewById(R.id.rv_List);
-    }
-
-    public void setData() {
-        try {
-            DbCreation obj = new DbCreation(HomeActivity.this);
-            ArrayList<ImagePOJO> al_Image = new ArrayList<>();
-
-            al_Image = obj.getCarDetails();
-
-            HomeAdapter adapter = new HomeAdapter(HomeActivity.this, al_Image,"home");
-
-            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext(),
-                    RecyclerView.VERTICAL, false);
-            rv_List.setLayoutManager(mLayoutManager);
-            rv_List.setAdapter(adapter);
-            adapter.notifyDataSetChanged();
-            rv_List.setNestedScrollingEnabled(false);
-        } catch (Exception e) {
-            e.printStackTrace();
+        handler = new Handler();
+        sharedPreferences = getSharedPreferences("loginState", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        state = "0";
+        DbCreation obj = new DbCreation(SplashScreenActivity.this);
+        obj.tableLoginStateCreation();
+        String loginState = obj.getLoginState();
+        if (loginState.equalsIgnoreCase("none")) {
+            editor.putString("state", "0");
+            editor.commit();
+            state = sharedPreferences.getString("state", "");
+            obj.addLoginState(state);
         }
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                state = sharedPreferences.getString("state", "");
+                if (state.equalsIgnoreCase("1")) {
+                    Intent intent = new Intent(SplashScreenActivity.this, LoginActivity.class);
+                    startActivity(intent);
+
+                }
+                else if(state.equalsIgnoreCase("2")){
+                    Intent intent = new Intent(SplashScreenActivity.this, HomeNewActivity.class);
+                    startActivity(intent);
+
+                }
+                else {
+                    Intent intent = new Intent(SplashScreenActivity.this, IntroductionActivity.class);
+                    startActivity(intent);
+
+                }
+                finish();
+            }
+        }, 20000);
+
     }
 
     private boolean checkPermission() {
@@ -133,11 +129,20 @@ public class HomeActivity extends AppCompatActivity {
 
 
     private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
-        new AlertDialog.Builder(HomeActivity.this)
+        new AlertDialog.Builder(SplashScreenActivity.this)
                 .setMessage(message)
                 .setPositiveButton("OK", okListener)
                 .setNegativeButton("Cancel", null)
                 .create()
                 .show();
     }
+
 }
+
+
+
+
+
+
+
+
